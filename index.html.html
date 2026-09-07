@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(Gratis) Generator Outline Slide Presentasi</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111111;
+            color: #e3e3e3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 1px solid #282828;
+            background-color: #141414;
+        }
+        .header .logo {
+            width: 48px;
+            height: 48px;
+            background-color: #8b4513;
+            color: #ffb380;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 500;
+        }
+        .header p {
+            color: #888;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .message {
+            max-width: 90%;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        .message.user {
+            align-self: flex-end;
+            background-color: #2a2a2a;
+            padding: 12px 20px;
+            border-radius: 18px 18px 2px 18px;
+        }
+        .message.bot {
+            align-self: flex-start;
+        }
+        .message.bot .bot-name {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .input-area {
+            padding: 15px 20px;
+            background-color: #181818;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid #222;
+        }
+        .input-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            background-color: #252525;
+            border-radius: 25px;
+            padding: 4px 15px;
+            border: 1px solid #333;
+        }
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px;
+            font-size: 15px;
+            outline: none;
+        }
+        button.send-btn {
+            background: transparent;
+            border: none;
+            color: #d97736;
+            cursor: pointer;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .outline-box {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .outline-box h3 {
+            color: #ffffff;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            border-bottom: 1px solid #2e2e2e;
+            padding-bottom: 6px;
+        }
+        .outline-box h3:first-child {
+            margin-top: 0;
+        }
+        .outline-box ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        .outline-box li {
+            margin-bottom: 8px;
+        }
+        .summary-box {
+            background-color: #2b211a;
+            border-left: 4px solid #d97736;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #e3e3e3;
+        }
+        .action-bar {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .copy-btn {
+            background-color: #d97736;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background-color: #b86027;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 10px 0;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #888;
+            border-radius: 50%;
+            animation: bounce 1.3s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">(</div>
+        <h1>(Gratis) Generator Outline Slide Presentasi</h1>
+        <p>Silakan dimulai dengan mengetik Halo | This tools is totally free - created by Dody Gunawan</p>
+    </div>
+
+    <div class="chat-container" id="chatContainer"></div>
+
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder="Ketik pesan di sini..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        let chatState = 0; 
+
+        function addMessage(sender, htmlContent, id = null) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            if (id) msgDiv.id = id;
+            
+            if (sender === 'bot') {
+                msgDiv.innerHTML = `<span class="bot-name">(Gratis) Generator Outline Slide Presentasi • Dody Gunawan</span>${htmlContent}`;
+            } else {
+                msgDiv.innerHTML = htmlContent;
+            }
+            
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const indicatorHtml = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>`;
+            addMessage('bot', indicatorHtml, id);
+            return id;
+        }
+
+        function removeMessage(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage('user', text);
+            userInput.value = '';
+
+            const typingId = showTypingIndicator();
+
+            setTimeout(() => {
+                removeMessage(typingId);
+                processBotResponse(text);
+            }, 1000);
+        }
+
+        function processBotResponse(text) {
+            const lowerText = text.toLowerCase();
+
+            if (chatState === 0) {
+                if (lowerText.includes('halo') || lowerText.includes('hai')) {
+                    const reply = `
+                        Halo! 👋 Saya siap membantu membuat outline slide presentasi.<br><br>
+                        Sebelum mulai, saya membutuhkan 4 informasi dasar berikut:<br>
+                        <ol>
+                            <li><strong>Siapa audiensnya?</strong> (contoh: Siswa Kelas 7)</li>
+                            <li><strong>Apa topik atau tujuan pembelajarannya?</strong> (contoh: Memahami Peralatan Digital)</li>
+                            <li><strong>Berapa jumlah slide yang diinginkan?</strong> (contoh: 5)</li>
+                            <li><strong>Berapa ukuran skala gambarnya?</strong> (contoh: 16:9 atau 4:3)</li>
+                        </ol>
+                        <em>Silakan jawab sekaligus (pisahkan dengan Enter atau koma).</em>
+                    `;
+                    addMessage('bot', reply);
+                    chatState = 1;
+                } else {
+                    addMessage('bot', "Silakan ketik <strong>Halo</strong> untuk memulai.");
+                }
+            } else if (chatState === 1) {
+                // Ekstraksi jawaban
+                let audience = "Siswa Kelas 7";
+                let topic = "Memahami Peralatan Digital";
+                let slidesCount = 5;
+                let ratio = "16:9";
+
+                let lines = text.split(/[\n,]/).filter(l => l.trim() !== '');
+                if (lines.length >= 1 && lines[0]) audience = lines[0].replace(/^[\d\.\-\s]+/, '').trim();
+                if (lines.length >= 2 && lines[1]) topic = lines[1].replace(/^[\d\.\-\s]+/, '').trim();
+                if (lines.length >= 3 && lines[2]) {
+                    let parsedNum = parseInt(lines[2].replace(/[^\d]/g, ''));
+                    if (parsedNum && parsedNum > 0) slidesCount = Math.min(Math.max(parsedNum, 3), 15); // limit 3 - 15 slide
+                }
+                if (lines.length >= 4 && lines[3]) ratio = lines[3].replace(/^[\d\.\-\s]+/, '').trim();
+
+                const summaryHtml = `
+                    <div class="summary-box">
+                        <strong>Informasi Terkonfirmasi:</strong><br>
+                        🎯 Audiens: ${audience}<br>
+                        📚 Topik: ${topic}<br>
+                        📄 Jumlah Slide: ${slidesCount} Slide<br>
+                        🖼️ Skala Gambar: ${ratio}
+                    </div>
+                `;
+
+                // Penyusunan Slide Dinamis
+                let outlineHtml = `<div class="outline-box" id="generatedOutline">`;
+                
+                // Slide 1
+                outlineHtml += `
+                    <h3>Slide 1 — Mengenal ${topic} di Sekitar Kita</h3>
+                    <ul>
+                        <li><strong>Judul Materi:</strong> ${topic}</li>
+                        <li><strong>Mata Pelajaran / Target:</strong> ${audience}</li>
+                        <li><strong>Nama Guru / Pemateri</strong></li>
+                    </ul>`;
+
+                // Slide 2
+                outlineHtml += `
+                    <h3>Slide 2 — Tujuan & Pertanyaan Pemantik</h3>
+                    <p><strong>Tujuan Pembelajaran:</strong></p>
+                    <ul>
+                        <li>Memahami konsep inti dari ${topic}.</li>
+                        <li>Mampu menyebutkan contoh dan fungsinya dalam kehidupan sehari-hari.</li>
+                    </ul>
+                    <p><strong>Pertanyaan Pemantik:</strong></p>
+                    <ul>
+                        <li>Apa saja hal terkait materi ini yang kamu gunakan dari bangun tidur sampai sekarang?</li>
+                        <li>Menurutmu, bagaimana hal tersebut mempengaruhi aktivitas harian kita?</li>
+                    </ul>`;
+
+                // Slide Tengah Dinamis (3 s/d N-1)
+                if (slidesCount > 3) {
+                    outlineHtml += `
+                        <h3>Slide 3 — Apa Itu ${topic}?</h3>
+                        <ul>
+                            <li><strong>Pengertian:</strong> Definisi dasar mengenai ${topic} yang disesuaikan untuk ${audience}.</li>
+                            <li><strong>Ciri Utama:</strong> Karakteristik penting yang membedakannya dari konsep lain.</li>
+                            <li><strong>Perbedaan Sederhana:</strong> Komparasi sistem lama (analog) vs modern (digital).</li>
+                            <li><strong>Visual:</strong> Gambar pembanding langsung antara benda/konsep lama dan baru.</li>
+                        </ul>`;
+                }
+
+                if (slidesCount > 4) {
+                    outlineHtml += `
+                        <h3>Slide 4 — Contoh dan Fungsinya</h3>
+                        <ul>
+                            <li><strong>Untuk Komunikasi:</strong> Penerapan dalam interaksi sosial sehari-hari.</li>
+                            <li><strong>Untuk Belajar & Bekerja:</strong> Alat bantu mempermudah tugas dan riset.</li>
+                            <li><strong>Untuk Hiburan & Dokumentasi:</strong> Penggunaan dalam waktu luang.</li>
+                            <li><strong>Visual:</strong> Ikon atau foto dari masing-masing kategori perangkat tersebut.</li>
+                        </ul>`;
+                }
+
+                // Generasi slide tambahan jika user minta > 5 slide
+                for (let i = 5; i < slidesCount; i++) {
+                    outlineHtml += `
+                        <h3>Slide ${i} — Pendalaman & Studi Kasus (Bagian ${i - 4})</h3>
+                        <ul>
+                            <li><strong>Analisis Kasus:</strong> Contoh penerapan ${topic} pada situasi nyata.</li>
+                            <li><strong>Dampak & Solusi:</strong> Tantangan yang sering dihadapi ${audience} dan cara mengatasinya.</li>
+                            <li><strong>Visual:</strong> Infografis atau diagram alur proses.</li>
+                        </ul>`;
+                }
+
+                // Slide Terakhir (Exit Ticket)
+                outlineHtml += `
+                    <h3>Slide ${slidesCount} — Quiz Singkat & Refleksi (Exit Ticket)</h3>
+                    <p><strong>Quiz Singkat:</strong></p>
+                    <ul>
+                        <li>Sebutkan 2 contoh terkait ${topic} di sekitarmu, lalu jelaskan manfaatnya!</li>
+                    </ul>
+                    <p><strong>Refleksi Pembelajaran:</strong></p>
+                    <ul>
+                        <li>Apa satu hal baru yang kamu pelajari hari ini?</li>
+                        <li>Apakah ada materi yang masih membuatmu bingung?</li>
+                    </ul>
+                    <p><strong>Aktivitas:</strong> ${audience} menuliskan jawaban quiz di kertas kecil / media online sebelum sesi berakhir.</p>`;
+
+                outlineHtml += `</div>`;
+
+                const actionHtml = `
+                    <div class="action-bar">
+                        <button class="copy-btn" onclick="copyOutline()">📋 Salin Outline</button>
+                    </div>
+                    <p style="margin-top:15px; font-size:13px; color:#888;">Format ini dioptimalkan untuk ukuran rasio <strong>${ratio}</strong>. Ketik <strong>Halo</strong> untuk membuat outline baru.</p>
+                `;
+
+                const fullResponse = `Berikut adalah outline slide presentasi mengenai "<strong>${topic}</strong>" yang disesuaikan untuk <strong>${audience}</strong> (${slidesCount} slide):` + summaryHtml + outlineHtml + actionHtml;
+
+                addMessage('bot', fullResponse);
+                chatState = 0; // Reset ke awal
+            }
+        }
+
+        function copyOutline() {
+            const container = document.getElementById('generatedOutline');
+            if (!container) return;
+            
+            // Konversi HTML ke Teks Bersih
+            let textToCopy = container.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Outline berhasil disalin ke clipboard!');
+            }).catch(err => {
+                console.error('Gagal menyalin: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
